@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+.sidebar-gradient {
+  background: linear-gradient(to bottom, #0fb7d4, #591293, #0b0f1b) !important;
+}
+
+/* Override ant-design's default background for menu items to be transparent */
+.sidebar-gradient .ant-menu {
+  background: transparent !important;
+}
+
+/* Ensure the collapse trigger button inherits the gradient */
+.sidebar-gradient .ant-layout-sider-trigger {
+  background: inherit !important;
+}
