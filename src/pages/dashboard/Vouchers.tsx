@@ -22,7 +22,7 @@ interface Voucher {
 }
 
 export default function Vouchers() {
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [vouchers] = useState<Voucher[]>([]);
 
   return (
     <div>

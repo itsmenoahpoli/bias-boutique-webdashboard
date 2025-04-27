@@ -21,7 +21,7 @@ interface Customer {
 }
 
 export default function Customers() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers] = useState<Customer[]>([]);
 
   return (
     <div>
