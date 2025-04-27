@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import Error404 from "./pages/Error404";
 import SignIn from "./pages/AuthPages/SignIn";
 import AppLayout from "./layout/AppLayout";
@@ -15,8 +17,12 @@ export default function App() {
     <>
       <Router>
         <ScrollToTop />
+        <ToastContainer
+          position="top-center"
+          theme="colored"
+          style={{ zIndex: 999999 }} // Using the highest z-index from your variables
+        />
         <Routes>
-          {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route path="/" element={<Overview />} />
             <Route path="/products" element={<Products />} />
@@ -26,10 +32,7 @@ export default function App() {
             <Route path="/customers" element={<Customers />} />
           </Route>
 
-          {/* Auth Layout */}
           <Route path="/signin" element={<SignIn />} />
-
-          {/* Not found */}
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>

@@ -1,19 +1,19 @@
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import PageMeta from "../../components/common/PageMeta";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageMeta from "@/components/common/PageMeta";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Modal } from "../../components/ui/modal";
-import Button from "../../components/ui/button/Button";
-import Input from "../../components/_archives/form/input/InputField";
-import Label from "../../components/_archives/form/Label";
-import { useModal } from "../../hooks/useModal";
+import { Modal } from "@/components/ui/modal";
+import Button from "@/components/ui/button/Button";
+import Input from "@/components/form/input/InputField";
+import Label from "@/components/form/Label";
+import { useModal } from "@/hooks/useModal";
 import { useDropzone } from "react-dropzone";
 
 interface Product {

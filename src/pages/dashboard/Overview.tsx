@@ -1,5 +1,5 @@
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import PageMeta from "../../components/common/PageMeta";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageMeta from "@/components/common/PageMeta";
 import { Package, BarChart3, CreditCard, Users } from "lucide-react";
 
 export default function Overview() {
