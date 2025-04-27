@@ -1,8 +1,38 @@
+import { useEffect, useState } from "react";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import { Package, BarChart3, CreditCard, Users } from "lucide-react";
+import { useDashboardService } from "@/services/dashboard.service";
+import { toast } from "react-toastify";
+
+interface DashboardSummary {
+  total_products: number;
+  total_orders: number;
+  total_customers: number;
+}
 
 export default function Overview() {
+  const [summary, setSummary] = useState<DashboardSummary>({
+    total_products: 0,
+    total_orders: 0,
+    total_customers: 0,
+  });
+  const { getDashboardSummary } = useDashboardService();
+
+  useEffect(() => {
+    fetchDashboardSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchDashboardSummary = async () => {
+    try {
+      const data = await getDashboardSummary();
+      setSummary(data);
+    } catch (error) {
+      toast.error("Failed to fetch dashboard summary");
+    }
+  };
+
   return (
     <div>
       <PageMeta
@@ -23,7 +53,7 @@ export default function Overview() {
               Total Products
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              32
+              {summary.total_products}
             </h4>
           </div>
         </div>
@@ -38,7 +68,7 @@ export default function Overview() {
               Total Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              4
+              {summary.total_orders}
             </h4>
           </div>
         </div>
@@ -68,7 +98,7 @@ export default function Overview() {
               Total Customers
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5
+              {summary.total_customers}
             </h4>
           </div>
         </div>

@@ -21,7 +21,7 @@ interface Payment {
 }
 
 export default function Payments() {
-  const [payments, setPayments] = useState<Payment[]>([]);
+  const [payments] = useState<Payment[]>([]);
 
   return (
     <div>

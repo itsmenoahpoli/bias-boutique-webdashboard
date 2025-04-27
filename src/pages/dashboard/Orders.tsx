@@ -21,7 +21,7 @@ interface Order {
 }
 
 export default function Orders() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders] = useState<Order[]>([]);
 
   return (
     <div>
