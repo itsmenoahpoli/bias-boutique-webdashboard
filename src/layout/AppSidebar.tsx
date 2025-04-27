@@ -8,7 +8,7 @@ import {
   GridIcon,
   HorizontaLDots,
   BoxIcon,
-} from "..@/icons";
+} from "@/icons";
 import { useSidebar } from "../context/SidebarContext";
 
 type NavItem = {
