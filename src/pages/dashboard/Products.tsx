@@ -18,6 +18,7 @@ import { useDropzone } from "react-dropzone";
 import Select from "@/components/form/Select";
 import { useProductsService } from "@/services/products.service";
 import { toast } from "react-toastify";
+import { getImageUrl } from "@/utils/url";
 
 const PRODUCT_CATEGORIES = [
   { value: "Accessories", label: "Accessories" },
@@ -166,14 +167,15 @@ export default function Products() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (
-      !formData.name ||
-      !formData.category ||
-      !formData.description ||
-      !formData.image
-    ) {
-      toast.error("Please fill in all required fields and upload an image");
+    // Validate required fields - remove image from validation when editing
+    if (!formData.name || !formData.category || !formData.description) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // For new products, image is required
+    if (!isEditing && !formData.image) {
+      toast.error("Please upload an image");
       return;
     }
 
@@ -185,7 +187,7 @@ export default function Products() {
           description: formData.description,
           stock: formData.stock,
           price: formData.price,
-          ...(formData.image && { image: formData.image }),
+          ...(formData.image && { image: formData.image }), // Only include image if new one is selected
         });
         toast.success("Product updated successfully");
       } else {
@@ -318,7 +320,7 @@ export default function Products() {
                 <TableRow key={product.id}>
                   <TableCell className="py-3">
                     <img
-                      src={product.image}
+                      src={getImageUrl(product.image)}
                       alt={product.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
@@ -420,7 +422,6 @@ export default function Products() {
               <div>
                 <Label htmlFor="price">Price</Label>
                 <Input
-                  type="number"
                   id="price"
                   name="price"
                   value={formData.price}
