@@ -83,7 +83,7 @@ export default function Overview() {
               Total Sales
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              PHP4,500.00
+              PHP 0.00
             </h4>
           </div>
         </div>
