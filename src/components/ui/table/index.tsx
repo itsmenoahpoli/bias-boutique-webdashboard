@@ -1,3 +1,4 @@
+import React from "react";
 import { ReactNode } from "react";
 
 // Props for Table
@@ -14,7 +15,7 @@ interface TableHeaderProps {
 
 // Props for TableBody
 interface TableBodyProps {
-  children: ReactNode; // Body row(s)
+  children?: ReactNode; // Made optional by adding '?'
   className?: string; // Optional className for styling
 }
 
@@ -43,7 +44,24 @@ const TableHeader: React.FC<TableHeaderProps> = ({ children, className }) => {
 
 // TableBody Component
 const TableBody: React.FC<TableBodyProps> = ({ children, className }) => {
-  return <tbody className={className}>{children}</tbody>;
+  const hasChildren = React.Children.count(children) > 0;
+
+  return (
+    <tbody className={className}>
+      {hasChildren ? (
+        children
+      ) : (
+        <tr>
+          <td
+            colSpan={100}
+            className="py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400"
+          >
+            No data available
+          </td>
+        </tr>
+      )}
+    </tbody>
+  );
 };
 
 // TableRow Component

@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pencil, Trash2 } from "lucide-react";
+import { Package, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -266,101 +266,115 @@ export default function Products() {
           <Button onClick={handleAddNew}>Add Product</Button>
         </div>
 
-        <div className="max-w-full overflow-x-auto">
-          <Table>
-            <TableHeader className="border-y border-gray-100 dark:border-gray-800">
-              <TableRow>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Image
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Product Name
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Category
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Description
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Stock
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Price
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="py-3">
-                    <img
-                      src={getImageUrl(product.image)}
-                      alt={product.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
+        {products.length > 0 ? (
+          <div className="max-w-full overflow-x-auto">
+            <Table>
+              <TableHeader className="border-y border-gray-100 dark:border-gray-800">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Image
                   </TableCell>
-                  <TableCell className="py-3 text-gray-800 text-theme-sm dark:text-white/90">
-                    {product.name}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Product Name
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {product.category}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Category
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {product.description}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Description
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {product.stock}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Stock
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    PHP{product.price.toFixed(2)}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Price
                   </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleUpdate(product.id)}
-                        className="p-1 text-blue-500 hover:text-blue-700"
-                      >
-                        <Pencil className="size-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="p-1 text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Actions
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+
+              <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="py-3">
+                      <img
+                        src={getImageUrl(product.image)}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-800 text-theme-sm dark:text-white/90">
+                      {product.name}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {product.category}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {product.description}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {product.stock}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      PHP{product.price.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleUpdate(product.id)}
+                          className="p-1 text-blue-500 hover:text-blue-700"
+                        >
+                          <Pencil className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="p-1 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full dark:bg-gray-800 mb-4">
+              <Package className="text-gray-500 size-8" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              No Products Yet
+            </h3>
+            <p className="text-gray-500 text-center max-w-sm">
+              When you add products, they will appear here.
+            </p>
+          </div>
+        )}
         <Modal
           isOpen={isOpen}
           onClose={handleCloseModal}
