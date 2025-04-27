@@ -16,7 +16,25 @@ instance.interceptors.request.use(
      * Set Headers
      */
     config.headers["Accept"] = "application/json";
-    config.headers["Content-Type"] = "application/json";
+    // config.headers["Content-Type"] = "application/json";
+
+    /**
+     * Force HTTPS
+     */
+    if (
+      !config.url?.includes("localhost") &&
+      config.url &&
+      !config.url.startsWith("https://")
+    ) {
+      config.url = config.url.replace("http://", "https://");
+    }
+    if (
+      !config.baseURL?.includes("localhost") &&
+      config.baseURL &&
+      !config.baseURL.startsWith("https://")
+    ) {
+      config.baseURL = config.baseURL.replace("http://", "https://");
+    }
 
     return config;
   },

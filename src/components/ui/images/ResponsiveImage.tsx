@@ -3,7 +3,7 @@ export default function ResponsiveImage() {
     <div className="relative">
       <div className="overflow-hidden">
         <img
-          src="/images/grid-image/image-01.png"
+          src="https://placehold.co/600x400"
           alt="Cover"
           className="w-full border border-gray-200 rounded-xl dark:border-gray-800"
         />

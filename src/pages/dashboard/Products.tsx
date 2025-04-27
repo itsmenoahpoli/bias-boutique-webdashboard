@@ -8,13 +8,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { useModal } from "@/hooks/useModal";
 import { useDropzone } from "react-dropzone";
+import Select from "@/components/form/Select";
+import { useProductsService } from "@/services/products.service";
+import { toast } from "react-toastify";
+
+const PRODUCT_CATEGORIES = [
+  { value: "Accessories", label: "Accessories" },
+  { value: "Photocards", label: "Photocards" },
+  { value: "Lightsticks", label: "Lightsticks" },
+  { value: "Clothing", label: "Clothing" },
+  { value: "Stationary", label: "Stationary" },
+  { value: "Albums", label: "Albums" },
+  { value: "Home Goods", label: "Home Goods" },
+  { value: "Beauty Products", label: "Beauty Products" },
+];
 
 interface Product {
   id: number;
@@ -37,62 +51,9 @@ interface ProductFormData {
 
 export default function Products() {
   const { isOpen, openModal, closeModal } = useModal();
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      name: "Elegant Evening Dress",
-      category: "Clothing",
-      description: "Black floor-length gown with lace details",
-      stock: 25,
-      price: 299.99,
-      image: "/images/product/evening-dress.jpg",
-    },
-    {
-      id: 2,
-      name: "MAC Retro Matte Lipstick",
-      category: "Makeup",
-      description: "Long-lasting matte finish in Ruby Woo",
-      stock: 150,
-      price: 19.99,
-      image: "/images/product/mac-lipstick.jpg",
-    },
-    {
-      id: 3,
-      name: "Designer Denim Jacket",
-      category: "Clothing",
-      description: "Vintage wash with distressed details",
-      stock: 45,
-      price: 159.99,
-      image: "/images/product/denim-jacket.jpg",
-    },
-    {
-      id: 4,
-      name: "Fenty Beauty Foundation",
-      category: "Makeup",
-      description: "Pro Filt'r Soft Matte, 50 shades",
-      stock: 200,
-      price: 38.0,
-      image: "/images/product/fenty-foundation.jpg",
-    },
-    {
-      id: 5,
-      name: "Silk Blouse",
-      category: "Clothing",
-      description: "100% natural silk in cream white",
-      stock: 30,
-      price: 129.99,
-      image: "/images/product/silk-blouse.jpg",
-    },
-    {
-      id: 6,
-      name: "Urban Decay Eyeshadow Palette",
-      category: "Makeup",
-      description: "Naked3, 12 rose-hued neutrals",
-      stock: 85,
-      price: 54.99,
-      image: "/images/product/urban-decay-palette.jpg",
-    },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const { getProducts, createProduct, updateProduct, deleteProduct } =
+    useProductsService();
 
   const [formData, setFormData] = useState<ProductFormData>({
     name: "",
@@ -125,13 +86,23 @@ export default function Products() {
   });
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "stock" || name === "price" ? parseFloat(value) : value,
-    }));
+    if (typeof e === "string") {
+      // Handle select change
+      setFormData((prev) => ({
+        ...prev,
+        category: e,
+      }));
+    } else {
+      // Handle input change
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]:
+          name === "stock" || name === "price" ? parseFloat(value) : value,
+      }));
+    }
   };
 
   const handleAddNew = () => {
@@ -147,20 +118,24 @@ export default function Products() {
     openModal();
   };
 
-  const handleUpdate = (id: number) => {
-    const productToEdit = products.find((product) => product.id === id);
-    if (productToEdit) {
-      setEditingId(id);
-      setIsEditing(true);
-      setFormData({
-        name: productToEdit.name,
-        category: productToEdit.category,
-        description: productToEdit.description,
-        stock: productToEdit.stock,
-        price: productToEdit.price,
-        image: null,
-      });
-      openModal();
+  const handleUpdate = async (id: number) => {
+    try {
+      const productToEdit = products.find((product) => product.id === id);
+      if (productToEdit) {
+        setEditingId(id);
+        setIsEditing(true);
+        setFormData({
+          name: productToEdit.name,
+          category: productToEdit.category,
+          description: productToEdit.description,
+          stock: productToEdit.stock,
+          price: productToEdit.price,
+          image: null,
+        });
+        openModal();
+      }
+    } catch (error) {
+      toast.error("Failed to load product details");
     }
   };
 
@@ -169,13 +144,17 @@ export default function Products() {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteProductId) {
-      setProducts((prev) =>
-        prev.filter((product) => product.id !== deleteProductId)
-      );
-      setShowDeleteModal(false);
-      setDeleteProductId(null);
+      try {
+        await deleteProduct(deleteProductId.toString());
+        await fetchProducts();
+        toast.success("Product deleted successfully");
+        setShowDeleteModal(false);
+        setDeleteProductId(null);
+      } catch (error) {
+        toast.error("Failed to delete product");
+      }
     }
   };
 
@@ -184,47 +163,65 @@ export default function Products() {
     setDeleteProductId(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isEditing && editingId !== null) {
-      // Add null check
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === editingId
-            ? {
-                ...product,
-                ...formData,
-                image: formData.image
-                  ? URL.createObjectURL(formData.image)
-                  : product.image,
-              }
-            : product
-        )
-      );
-    } else {
-      const newProduct: Product = {
-        id: products.length + 1,
-        ...formData,
-        image: formData.image
-          ? URL.createObjectURL(formData.image)
-          : "/images/product/placeholder.jpg",
-      };
-      setProducts((prev) => [...prev, newProduct]);
+    // Validate required fields
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.description ||
+      !formData.image
+    ) {
+      toast.error("Please fill in all required fields and upload an image");
+      return;
     }
 
-    // Reset everything
-    setFormData({
-      name: "",
-      category: "",
-      description: "",
-      stock: 0,
-      price: 0,
-      image: null,
-    });
-    setEditingId(null);
-    setIsEditing(false);
-    closeModal();
+    try {
+      if (isEditing && editingId !== null) {
+        await updateProduct(editingId.toString(), {
+          name: formData.name,
+          category: formData.category,
+          description: formData.description,
+          stock: formData.stock,
+          price: formData.price,
+          ...(formData.image && { image: formData.image }),
+        });
+        toast.success("Product updated successfully");
+      } else {
+        // Create new product
+        await createProduct({
+          name: formData.name,
+          category: formData.category,
+          description: formData.description,
+          stock: formData.stock,
+          price: formData.price,
+          image: formData.image!, // We know it exists due to validation
+        });
+        toast.success("Product created successfully");
+      }
+
+      // Refresh products list
+      await fetchProducts();
+
+      // Reset form and close modal
+      setFormData({
+        name: "",
+        category: "",
+        description: "",
+        stock: 0,
+        price: 0,
+        image: null,
+      });
+      setEditingId(null);
+      setIsEditing(false);
+      closeModal();
+    } catch (error) {
+      console.error("Error submitting product:", error);
+      toast.error(
+        isEditing ? "Failed to update product" : "Failed to create product"
+      );
+    }
   };
 
   const handleCloseModal = () => {
@@ -239,6 +236,20 @@ export default function Products() {
       image: null,
     });
     closeModal();
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts();
+      setProducts(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch products");
+    }
   };
 
   return (
@@ -354,7 +365,9 @@ export default function Products() {
           className="w-3/4 max-w-4xl"
         >
           <div className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              {isEditing ? "Edit Product" : "Add New Product"}
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="name">Product Name</Label>
@@ -370,13 +383,12 @@ export default function Products() {
 
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Input
-                  type="text"
-                  id="category"
-                  name="category"
-                  value={formData.category}
+                <Select
+                  options={PRODUCT_CATEGORIES}
+                  placeholder="Select Category"
                   onChange={handleInputChange}
-                  required
+                  defaultValue={formData.category}
+                  className="dark:bg-gray-900"
                 />
               </div>
 
@@ -442,7 +454,9 @@ export default function Products() {
                 <Button variant="outline" onClick={handleCloseModal}>
                   Cancel
                 </Button>
-                <Button>Add Product</Button>
+                <Button type="submit">
+                  {isEditing ? "Save Changes" : "Add Product"}
+                </Button>
               </div>
             </form>
           </div>
